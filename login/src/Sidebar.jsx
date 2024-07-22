@@ -53,12 +53,12 @@ const Sidebar = () => {
 
             </div>
           
-          <div className='h-36 w-[95%] bg-[#242424] rounded-2xl ml-2 flex flex-col items-start pl-8  justify-start pt-7 font-semibold '>
+          {/* <div className='h-36 w-[95%] bg-[#242424] rounded-2xl ml-2 flex flex-col items-start pl-8  justify-start pt-7 font-semibold '>
             <h1 className='text-xl   font-bold'>Lets Find some podcasts</h1>
             <p className=' mt-2  text-lg font-thin '>will keep on update on new podcasts</p>
             <button className=' mt-2 bg-black w-36 h-9 rounded-3xl'>Browse Podcasts</button>
 
-            </div>
+            </div> */}
           
             </div>
 
