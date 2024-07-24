@@ -96,6 +96,56 @@ app.get("/lyrics", async (req, res) => {
   res.json({ lyrics });
 });
 
+
+
+const getToken = async () => {
+  const tokenUrl = 'https://accounts.spotify.com/api/token';
+  const response = await axios.post(tokenUrl, 'grant_type=client_credentials', {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
+    },
+  });
+  return response.data.access_token;
+};
+
+
+
+app.get('/api/token', async (req, res) => {
+  try {
+    const token = await getToken();
+    res.json({ token });
+  } catch (error) {
+    res.status(500).send('Error retrieving access token');
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.listen(3001, () => {
   console.log("server is running on port 3001");
 });
