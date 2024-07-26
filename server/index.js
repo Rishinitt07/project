@@ -20,11 +20,18 @@ app.post("/login", (req, res) => {
     if (user) {
       if (user.pass === pass) {
         res.json("Success");
+        res.json(userinfo)
         console.log(user.name);
+        
+        
+
       } else {
         res.json("The password is incorrect");
       }
-    } else {
+    } 
+    
+    
+    else {
       res.json("No record found");
     }
   });
@@ -37,7 +44,7 @@ app.post("/info", (req, res) => {
     .catch((err) => res.json(err));
 });
 
-app.post("./home", (req, res) => {
+app.post("/home", (req, res) => {
   userModel
     .create(req.body)
     .then((home) => res.json(home))
@@ -89,6 +96,84 @@ app.post("/loginto", (req, res) => {
     });
 });
 
+
+
+
+
+
+
+
+app.post("/refreshplay", (req, res) => {
+  const refreshToken = req.body.refreshToken;
+  const spotifyApi = new SpotifyWebApi({
+    redirectUri: "http://localhost:5173/playlist",
+    clientId: "b9e7f4a1fe48400790a362c6de406e4a",
+    clientSecret: "9b5b9d5c8edd41e7adb74f0ce3066b2e",
+    refreshToken,
+  });
+
+  spotifyApi
+    .refreshAccessToken()
+    .then((data) => {
+      res.json({
+        accessToken: data.body.accessToken,
+        expiresIn: data.body.expiresIn,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.sendStatus(400);
+    });
+});
+
+app.post("/logintoplay", (req, res) => {
+  const code = req.body.code;
+  const spotifyApi = new SpotifyWebApi({
+    redirectUri: "http://localhost:5173/playlist",
+    clientId: "b9e7f4a1fe48400790a362c6de406e4a",
+    clientSecret: "9b5b9d5c8edd41e7adb74f0ce3066b2e",
+  });
+
+  spotifyApi
+    .authorizationCodeGrant(code)
+    .then((data) => {
+      res.json({
+        accessToken: data.body.access_token,
+        refreshToken: data.body.refresh_token,
+        expiresIn: data.body.expires_in,
+      });
+    })
+    .catch((err) => {
+      res.sendStatus(400);
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.get("/lyrics", async (req, res) => {
   const lyrics =
     (await lyricsfinder(req.query.artist, req.query.track)) ||
@@ -98,27 +183,31 @@ app.get("/lyrics", async (req, res) => {
 
 
 
-const getToken = async () => {
-  const tokenUrl = 'https://accounts.spotify.com/api/token';
-  const response = await axios.post(tokenUrl, 'grant_type=client_credentials', {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
-    },
+
+
+
+app.post("/friends", (req, res) => {
+  const {user} = req.body;
+  userModel.findOne({user : user }).then((user) => {
+    console.log(user)
+    if (user) {
+      
+        res.json("Success");
+        console.log(user);
+      
+      // else {
+      //   res.json("The password is incorrect");
+      // }
+    } else {
+      res.json("No record found");
+      console.log(user);
+    }
   });
-  return response.data.access_token;
-};
-
-
-
-app.get('/api/token', async (req, res) => {
-  try {
-    const token = await getToken();
-    res.json({ token });
-  } catch (error) {
-    res.status(500).send('Error retrieving access token');
-  }
 });
+
+
+
+
 
 
 
